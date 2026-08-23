@@ -1,8 +1,11 @@
 /**
- * Raíz de la aplicación: compone el layout y los proveedores de contexto.
+ * Raíz de la aplicación: compone el layout y, más adelante, los proveedores
+ * de contexto y la vista de búsqueda de productos.
  */
+import { AppLayout } from '@/components/layout/AppLayout';
+
 function App() {
-  return <main>e-Commerce Gapsi</main>;
+  return <AppLayout />;
 }
 
 export default App;
