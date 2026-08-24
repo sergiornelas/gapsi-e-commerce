@@ -1,14 +1,14 @@
 /**
  * Barra superior de la aplicación: identidad de marca y acciones globales.
  */
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 
-import { ResetButton } from '@/components/layout/ResetButton';
-import { brand } from '@/config/theme';
-import type { HeaderProps } from '@/types';
+import { ResetButton } from "@/components/layout/ResetButton";
+import { brand } from "@/config/theme";
+import type { HeaderProps } from "@/types";
 
 export function Header({ onReset, disabled }: HeaderProps) {
   return (
@@ -28,10 +28,15 @@ export function Header({ onReset, disabled }: HeaderProps) {
           component="img"
           src="/logo.webp"
           alt="Gapsi"
-          sx={{ height: 34, width: 'auto', display: 'block' }}
+          sx={{ height: 34, width: "auto", display: "block" }}
         />
 
-        <Typography variant="h1" component="h1" noWrap sx={{ color: brand.text }}>
+        <Typography
+          variant="h1"
+          component="h1"
+          noWrap
+          sx={{ color: brand.text }}
+        >
           e-Commerce Gapsi
         </Typography>
 
