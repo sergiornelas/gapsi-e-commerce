@@ -13,6 +13,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { useApolloClient } from '@apollo/client/react';
 import Box from '@mui/material/Box';
 
 import { CartPanel } from '@/components/cart/CartPanel';
@@ -36,12 +37,22 @@ function Tienda() {
   // realmente dispara la consulta, retrasado para no llamar al servicio en
   // cada tecla.
   const [keyword, setKeyword] = useState('');
-  const debouncedKeyword = useDebouncedValue(keyword);
+  const retrasado = useDebouncedValue(keyword);
+
+  // El retardo existe para no lanzar una consulta por cada tecla. Un criterio
+  // vacío no genera ninguna consulta, así que no hay nada que retrasar: se
+  // aplica de inmediato para que borrar el campo (o reiniciar la aplicación)
+  // limpie la pantalla al instante en lugar de medio segundo después.
+  const debouncedKeyword = keyword.trim() === '' ? '' : retrasado;
 
   // Producto que viaja con el puntero durante el arrastre.
   const [arrastrando, setArrastrando] = useState<Product | null>(null);
 
-  const { addItem } = useCart();
+  const { addItem, clear: vaciarCarrito, items: enCarrito } = useCart();
+
+  // Se toma del contexto en lugar de importar la instancia directamente: así el
+  // componente no queda atado al módulo del cliente.
+  const apollo = useApolloClient();
 
   const { products, loading, loadingMore, hasMore, loadMore, error, isEmpty } =
     useProductSearch(debouncedKeyword);
@@ -62,6 +73,22 @@ function Tienda() {
   const alIniciarArrastre = useCallback((event: DragStartEvent) => {
     setArrastrando((event.active.data.current?.product as Product | undefined) ?? null);
   }, []);
+
+  /**
+   * Devuelve la aplicación a su estado inicial.
+   *
+   * El orden importa: primero se limpia el criterio, con lo que la consulta
+   * queda omitida (`skip`), y solo entonces se descarta la caché. Al revés,
+   * Apollo volvería a pedir la búsqueda que estamos borrando.
+   */
+  const reiniciar = useCallback(() => {
+    setKeyword('');
+    vaciarCarrito();
+    void apollo.clearStore();
+  }, [apollo, vaciarCarrito]);
+
+  // Sin búsqueda ni productos en el carrito no hay nada que reiniciar.
+  const hayAlgoQueReiniciar = keyword !== '' || enCarrito.length > 0;
 
   const alSoltar = useCallback(
     (event: DragEndEvent) => {
@@ -86,7 +113,7 @@ function Tienda() {
       onDragEnd={alSoltar}
       onDragCancel={() => setArrastrando(null)}
     >
-      <AppLayout>
+      <AppLayout onReset={reiniciar} disabled={!hayAlgoQueReiniciar}>
         <SearchBar value={keyword} onChange={setKeyword} loading={buscando && keyword !== ''} />
 
         <CartPanel />
