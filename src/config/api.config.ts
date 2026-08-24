@@ -6,10 +6,14 @@
  * de variables de entorno (`.env`), nunca se escriben en el código fuente.
  */
 
-/** Lee una variable de entorno obligatoria y falla temprano si no está definida. */
-const readEnv = (name: string): string => {
-  const value = import.meta.env[name] as string | undefined;
-
+/**
+ * Valida una variable de entorno obligatoria y falla temprano si falta.
+ *
+ * El valor se recibe como argumento en lugar de leerse con `import.meta.env[name]`
+ * porque Vite sustituye estas variables de forma estática en tiempo de build: el
+ * acceso dinámico por índice no se reemplaza y quedaría indefinido en producción.
+ */
+const requireEnv = (name: string, value: string | undefined): string => {
   if (!value) {
     throw new Error(
       `Falta la variable de entorno ${name}. Copia .env.example como .env y completa sus valores.`,
@@ -21,9 +25,9 @@ const readEnv = (name: string): string => {
 
 export const apiConfig = {
   /** Host de RapidAPI que expone el servicio. */
-  host: readEnv('VITE_RAPIDAPI_HOST'),
+  host: requireEnv('VITE_RAPIDAPI_HOST', import.meta.env.VITE_RAPIDAPI_HOST),
   /** Llave de suscripción a RapidAPI. */
-  key: readEnv('VITE_RAPIDAPI_KEY'),
+  key: requireEnv('VITE_RAPIDAPI_KEY', import.meta.env.VITE_RAPIDAPI_KEY),
   /** Endpoint de búsqueda por palabra clave. */
   searchPath: '/wlm/walmart-search-by-keyword',
   /** Criterio de ordenamiento soportado por el servicio. */
