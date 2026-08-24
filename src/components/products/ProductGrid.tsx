@@ -23,6 +23,7 @@ import { PRODUCT_CARD_HEIGHT } from '@/components/products/ProductCard';
 import { ProductSkeleton } from '@/components/products/ProductSkeleton';
 import { GRID_GAP, LOAD_MORE_THRESHOLD_ROWS, VIRTUAL_OVERSCAN } from '@/constants';
 import { brand } from '@/config/theme';
+import { useCart } from '@/hooks/useCart';
 import { useGridColumns } from '@/hooks/useGridColumns';
 import type { Product, ProductGridProps } from '@/types';
 
@@ -81,11 +82,20 @@ export function ProductGrid({
   keyword,
 }: ProductGridProps) {
   const columns = useGridColumns();
+  const { ids } = useCart();
 
   // Contenedor con scroll propio: es el que observa el virtualizador.
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const rows = useMemo(() => toRows(products, columns), [products, columns]);
+  // Lo que ya está en el carrito desaparece del catálogo. El filtro se aplica
+  // antes de agrupar en filas para que la retícula no quede con huecos, y para
+  // que la carga incremental se mida sobre lo que el usuario realmente ve.
+  const disponibles = useMemo(
+    () => products.filter((product) => !ids.has(product.id)),
+    [products, ids],
+  );
+
+  const rows = useMemo(() => toRows(disponibles, columns), [disponibles, columns]);
 
   // React Compiler no puede memoizar el objeto que devuelve useVirtualizer.
   // No aplica aquí porque el compilador no está habilitado en este proyecto, y
@@ -112,6 +122,15 @@ export function ProductGrid({
   // Cuando la última renderizada se acerca al final, se pide otra página.
   useEffect(() => {
     if (!hasMore || loadingMore) return;
+
+    // Sin filas no hay última fila visible que observar. Ocurre cuando el
+    // usuario agregó al carrito todo lo cargado: hay que reponer el catálogo,
+    // o la lista se quedaría vacía en espera de un scroll imposible.
+    if (rows.length === 0) {
+      onLoadMore();
+      return;
+    }
+
     if (ultimaFilaVisible < 0) return;
 
     if (ultimaFilaVisible >= rows.length - LOAD_MORE_THRESHOLD_ROWS) {
@@ -145,6 +164,22 @@ export function ProductGrid({
         icon="fa-regular fa-face-frown"
         title={`Sin resultados para "${keyword}"`}
         detail="Prueba con otro término. Recuerda que el catálogo está en inglés."
+      />
+    );
+  }
+
+  // Todo lo cargado ya está en el carrito: sin este aviso la lista quedaría en
+  // blanco sin explicación.
+  if (disponibles.length === 0 && products.length > 0 && !loadingMore) {
+    return (
+      <EstadoVacio
+        icon="fa-solid fa-cart-shopping"
+        title="Ya agregaste todos estos productos"
+        detail={
+          hasMore
+            ? 'Sigue bajando o espera un momento: se están cargando más resultados.'
+            : 'Quita alguno del carrito para volver a verlo aquí.'
+        }
       />
     );
   }
@@ -196,7 +231,7 @@ export function ProductGrid({
       )}
 
       {/* Fin del catálogo: cierra la lista en lugar de dejarla colgando. */}
-      {!hasMore && !loadingMore && products.length > 0 && (
+      {!hasMore && !loadingMore && disponibles.length > 0 && (
         <Typography variant="body2" sx={{ textAlign: 'center', py: 2.5, opacity: 0.7 }}>
           No hay más productos para "{keyword}".
         </Typography>
