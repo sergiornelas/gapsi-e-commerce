@@ -36,6 +36,37 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: { backgroundColor: brand.pageBackground },
+
+        // Barra de scroll discreta, a tono con el diseño. Se define aquí y no
+        // por componente para que cualquier área desplazable la herede.
+        '*::-webkit-scrollbar': { width: 10, height: 10 },
+        '*::-webkit-scrollbar-track': { background: 'transparent' },
+        '*::-webkit-scrollbar-thumb': {
+          backgroundColor: '#bdbdbd',
+          borderRadius: 8,
+          border: '3px solid transparent',
+          backgroundClip: 'content-box',
+        },
+        '*::-webkit-scrollbar-thumb:hover': { backgroundColor: '#9e9e9e' },
+        // Equivalente estándar para navegadores que no usan el prefijo.
+        '*': { scrollbarWidth: 'thin', scrollbarColor: '#bdbdbd transparent' },
+
+        // Anillo de foco uniforme para quien navega con teclado.
+        '*:focus-visible': {
+          outline: `2px solid ${brand.accent}`,
+          outlineOffset: 2,
+        },
+      },
+    },
+
+    MuiTooltip: {
+      defaultProps: { arrow: true, enterDelay: 400 },
+    },
+
+    MuiButton: {
+      defaultProps: { disableElevation: true },
+      styleOverrides: {
+        root: { textTransform: 'none', fontWeight: 500 },
       },
     },
   },
