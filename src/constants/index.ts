@@ -47,6 +47,18 @@ export const VIRTUAL_OVERSCAN = 2;
  */
 export const LOAD_MORE_THRESHOLD_ROWS = 5;
 
+/* Carrito */
+
+/** Identificador de la zona donde se sueltan los productos. */
+export const CART_DROPPABLE_ID = 'cart-dropzone';
+
+/**
+ * Distancia en píxeles que debe recorrer el puntero antes de iniciar un
+ * arrastre. Sin este margen, un clic simple sobre la tarjeta se interpretaría
+ * como arrastre.
+ */
+export const DRAG_ACTIVATION_DISTANCE = 8;
+
 /* Limpieza de texto */
 
 /** Separador con el que se sustituyen los bullets del HTML de la descripción. */

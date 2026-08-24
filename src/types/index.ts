@@ -41,6 +41,27 @@ export interface ProductPage {
   items: Product[];
 }
 
+/* Carrito */
+
+export interface CartState {
+  items: Product[];
+}
+
+export type CartAction =
+  | { type: 'ADD_ITEM'; product: Product }
+  | { type: 'REMOVE_ITEM'; id: string }
+  | { type: 'CLEAR' };
+
+/** Lo que el proveedor del carrito publica a sus consumidores. */
+export interface CartContextValue {
+  items: readonly Product[];
+  /** Identificadores en el carrito, para consultar pertenencia en O(1). */
+  ids: ReadonlySet<string>;
+  addItem: (product: Product) => void;
+  removeItem: (id: string) => void;
+  clear: () => void;
+}
+
 /* Consultas y hooks */
 
 /** Forma de la respuesta de la consulta `SearchProducts`. */
@@ -76,6 +97,13 @@ export interface SearchBarProps {
 
 export interface ProductCardProps {
   product: Product;
+  /** Atenúa la tarjeta mientras su copia flotante se está arrastrando. */
+  dragging?: boolean;
+}
+
+export interface CartItemProps {
+  product: Product;
+  onRemove: (id: string) => void;
 }
 
 export interface ProductGridProps {
