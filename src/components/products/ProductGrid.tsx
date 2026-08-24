@@ -1,28 +1,45 @@
 /**
- * Retícula de resultados de búsqueda.
+ * Retícula de resultados con scroll virtual.
  *
- * Concentra los cuatro estados posibles de la lista —sin criterio, cargando,
- * con error y sin resultados— para que el resto de la aplicación no tenga que
- * decidir qué mostrar en cada caso.
+ * Solo se montan en el DOM las filas visibles más un pequeño margen. Con 13
+ * páginas de resultados la lista puede superar los 500 productos: renderizarlos
+ * todos significaría miles de nodos y un scroll con tirones.
+ *
+ * Se virtualizan **filas completas, no tarjetas sueltas**. Es una simplificación
+ * deliberada: la retícula tiene un número conocido de columnas y las tarjetas
+ * una altura fija, así que agrupar los productos en filas permite tratar la
+ * retícula como una lista y evita medir cada elemento.
  */
+import { useEffect, useMemo, useRef } from 'react';
+
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
-import { ProductCard } from '@/components/products/ProductCard';
+import { PRODUCT_CARD_HEIGHT, ProductCard } from '@/components/products/ProductCard';
 import { ProductSkeleton } from '@/components/products/ProductSkeleton';
+import { GRID_GAP, VIRTUAL_OVERSCAN } from '@/constants';
 import { brand } from '@/config/theme';
-import type { ProductGridProps } from '@/types';
+import { useGridColumns } from '@/hooks/useGridColumns';
+import type { Product, ProductGridProps } from '@/types';
 
 /** Cuántos marcadores de carga mostrar mientras llega la primera página. */
 const SKELETON_COUNT = 6;
 
-/** Columnas por punto de ruptura. Se reutilizará al virtualizar la lista. */
-const GRID_COLUMNS = {
-  xs: 'repeat(1, 1fr)',
-  sm: 'repeat(2, 1fr)',
-  md: 'repeat(3, 1fr)',
-} as const;
+/** Alto de una fila: la tarjeta más la separación que la sigue. */
+const ROW_HEIGHT = PRODUCT_CARD_HEIGHT + GRID_GAP;
+
+/** Reparte los productos en filas de `columns` elementos. */
+const toRows = (products: readonly Product[], columns: number): Product[][] => {
+  const rows: Product[][] = [];
+
+  for (let index = 0; index < products.length; index += columns) {
+    rows.push(products.slice(index, index + columns));
+  }
+
+  return rows;
+};
 
 /** Mensaje centrado con un icono, para los estados sin contenido. */
 function EstadoVacio({ icon, title, detail }: { icon: string; title: string; detail?: string }) {
@@ -52,6 +69,30 @@ function EstadoVacio({ icon, title, detail }: { icon: string; title: string; det
 }
 
 export function ProductGrid({ products, loading, error, isEmpty, keyword }: ProductGridProps) {
+  const columns = useGridColumns();
+
+  // Contenedor con scroll propio: es el que observa el virtualizador.
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const rows = useMemo(() => toRows(products, columns), [products, columns]);
+
+  // React Compiler no puede memoizar el objeto que devuelve useVirtualizer.
+  // No aplica aquí porque el compilador no está habilitado en este proyecto, y
+  // la alternativa sería renunciar a la virtualización.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: VIRTUAL_OVERSCAN,
+  });
+
+  // Al cambiar el criterio, los resultados son otros: el scroll debe volver al
+  // inicio o el usuario aterrizaría a mitad de una lista que no ha visto.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [keyword]);
+
   if (error) {
     return (
       <Box sx={{ px: 3, py: 2 }}>
@@ -82,24 +123,53 @@ export function ProductGrid({ products, loading, error, isEmpty, keyword }: Prod
     );
   }
 
-  const showSkeletons = loading && products.length === 0;
+  // Mientras llega la primera página no hay nada que virtualizar.
+  if (loading && products.length === 0) {
+    return (
+      <Box sx={{ flex: 1, overflowY: 'auto', px: 3, pb: 3, ...gridSx(columns) }}>
+        {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+          <ProductSkeleton key={index} />
+        ))}
+      </Box>
+    );
+  }
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        overflowY: 'auto',
-        px: 3,
-        pb: 3,
-        display: 'grid',
-        gridTemplateColumns: GRID_COLUMNS,
-        gap: 2,
-        alignContent: 'start',
-      }}
-    >
-      {showSkeletons
-        ? Array.from({ length: SKELETON_COUNT }, (_, index) => <ProductSkeleton key={index} />)
-        : products.map((product) => <ProductCard key={product.id} product={product} />)}
+    <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', px: 3, pb: 3 }}>
+      {/* Espaciador con la altura total de la lista: mantiene la barra de
+          scroll proporcional aunque solo unas pocas filas existan en el DOM. */}
+      <Box sx={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
+        {virtualizer.getVirtualItems().map((virtualRow) => (
+          <Box
+            key={virtualRow.key}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              // Cada fila se posiciona con transform en lugar de `top` porque
+              // el navegador puede componerlo sin recalcular el diseño.
+              transform: `translateY(${virtualRow.start}px)`,
+              height: PRODUCT_CARD_HEIGHT,
+              ...gridSx(columns),
+            }}
+          >
+            {rows[virtualRow.index].map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
+}
+
+/** Estilos de retícula compartidos entre las filas virtuales y los skeletons. */
+function gridSx(columns: number) {
+  return {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${columns}, 1fr)`,
+    gap: `${GRID_GAP}px`,
+    alignContent: 'start',
+  } as const;
 }
