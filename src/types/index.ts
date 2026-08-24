@@ -41,6 +41,45 @@ export interface ProductPage {
   items: Product[];
 }
 
+/* Consultas y hooks */
+
+/** Forma de la respuesta de la consulta `SearchProducts`. */
+export interface SearchProductsData {
+  searchProducts: ProductPage;
+}
+
+/** Interfaz que el hook `useProductSearch` expone a los componentes. */
+export interface UseProductSearch {
+  products: readonly Product[];
+  loading: boolean;
+  /** Mensaje de error listo para mostrarse, o `null` si no hubo fallo. */
+  error: string | null;
+  /** La búsqueda terminó sin resultados. */
+  isEmpty: boolean;
+}
+
+/* Componentes */
+
+export interface SearchBarProps {
+  value: string;
+  onChange: (value: string) => void;
+  /** Indica que hay una consulta en curso para mostrar el avance. */
+  loading?: boolean;
+}
+
+export interface ProductCardProps {
+  product: Product;
+}
+
+export interface ProductGridProps {
+  products: readonly Product[];
+  loading: boolean;
+  error: string | null;
+  isEmpty: boolean;
+  /** Criterio actual, para dar contexto en los mensajes de estado. */
+  keyword: string;
+}
+
 /* Respuesta cruda del servicio (Axesso / Walmart) */
 /**
  * Estas interfaces describen únicamente los campos que el adapter necesita.
