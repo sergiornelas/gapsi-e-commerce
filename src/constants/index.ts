@@ -24,6 +24,20 @@ export const PRICE_LINE_LOOKUP: readonly { lineType: string; key: string }[] = [
   { lineType: "OPTIONS_RANGE", key: "LOW_PRICE" },
 ];
 
+/* Retícula de productos */
+
+/** Columnas de la retícula por punto de ruptura. */
+export const GRID_COLUMNS = { xs: 1, sm: 2, md: 3 } as const;
+
+/** Separación entre tarjetas, en píxeles. Debe coincidir con el `gap` del CSS. */
+export const GRID_GAP = 16;
+
+/**
+ * Filas de más que el virtualizador mantiene renderizadas por encima y por
+ * debajo del área visible, para que el scroll rápido no muestre huecos.
+ */
+export const VIRTUAL_OVERSCAN = 2;
+
 /* Limpieza de texto */
 
 /** Separador con el que se sustituyen los bullets del HTML de la descripción. */
