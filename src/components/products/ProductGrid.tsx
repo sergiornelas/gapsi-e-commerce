@@ -18,7 +18,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
-import { PRODUCT_CARD_HEIGHT, ProductCard } from '@/components/products/ProductCard';
+import { DraggableProductCard } from '@/components/products/DraggableProductCard';
+import { PRODUCT_CARD_HEIGHT } from '@/components/products/ProductCard';
 import { ProductSkeleton } from '@/components/products/ProductSkeleton';
 import { GRID_GAP, LOAD_MORE_THRESHOLD_ROWS, VIRTUAL_OVERSCAN } from '@/constants';
 import { brand } from '@/config/theme';
@@ -180,7 +181,7 @@ export function ProductGrid({
             }}
           >
             {rows[virtualRow.index].map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <DraggableProductCard key={product.id} product={product} />
             ))}
           </Box>
         ))}

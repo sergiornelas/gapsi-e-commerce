@@ -1,9 +1,12 @@
 /**
  * Tarjeta de producto: imagen, nombre y precio, según el diseño entregado.
  *
- * La altura es fija a propósito. Dos motivos: las tarjetas se alinean en una
- * retícula regular, y el scroll virtual del paso siguiente puede calcular
- * posiciones sin medir cada elemento, que es bastante más barato.
+ * Es un componente puramente presentacional. El arrastre lo añade
+ * `DraggableProductCard`, de modo que esta misma tarjeta pueda reutilizarse como
+ * vista previa flotante mientras se arrastra, sin arrastrarse a sí misma.
+ *
+ * La altura es fija a propósito: las tarjetas se alinean en una retícula regular
+ * y el scroll virtual calcula posiciones sin medir cada elemento.
  */
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,7 +19,7 @@ import { formatPrice } from '@/utils/formatPrice';
 /** Alto total de la tarjeta. Lo consume también la retícula virtualizada. */
 export const PRODUCT_CARD_HEIGHT = 280;
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, dragging = false }: ProductCardProps) {
   const { name, price, currency, image, description } = product;
 
   return (
@@ -28,7 +31,9 @@ export function ProductCard({ product }: ProductCardProps) {
         flexDirection: 'column',
         border: `1px solid ${brand.border}`,
         backgroundColor: '#fff',
-        transition: 'box-shadow 200ms ease, transform 200ms ease',
+        // El original se atenúa mientras su copia flotante viaja con el puntero.
+        opacity: dragging ? 0.35 : 1,
+        transition: 'box-shadow 200ms ease, transform 200ms ease, opacity 150ms ease',
         '&:hover': {
           boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
           transform: 'translateY(-2px)',
