@@ -11,7 +11,7 @@ import { Header } from '@/components/layout/Header';
 import { brand } from '@/config/theme';
 import type { AppLayoutProps } from '@/types';
 
-export function AppLayout({ children, onReset }: AppLayoutProps) {
+export function AppLayout({ children, onReset, disabled }: AppLayoutProps) {
   return (
     <Box
       sx={{
@@ -35,7 +35,7 @@ export function AppLayout({ children, onReset }: AppLayoutProps) {
           border: `1px solid ${brand.border}`,
         }}
       >
-        <Header onReset={onReset} />
+        <Header onReset={onReset} disabled={disabled} />
 
         {/* Área de contenido: es la que scrollea, no la página completa. */}
         <Box component="main" sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>

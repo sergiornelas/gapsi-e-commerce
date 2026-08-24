@@ -7,14 +7,17 @@
 import type { ReactNode } from "react";
 
 /* Layout */
-export interface HeaderProps {
-  /** Acción del botón superior derecho. Reinicia la aplicación. */
-  onReset?: () => void;
+export interface ResetButtonProps {
+  onReset: () => void;
+  /** Se deshabilita cuando la aplicación ya está en su estado inicial. */
+  disabled?: boolean;
 }
 
-export interface AppLayoutProps {
+/** El header no añade props propias: solo reenvía las del botón de reinicio. */
+export type HeaderProps = ResetButtonProps;
+
+export interface AppLayoutProps extends ResetButtonProps {
   children?: ReactNode;
-  onReset?: () => void;
 }
 
 /* Dominio */
