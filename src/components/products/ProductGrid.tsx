@@ -14,12 +14,13 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { PRODUCT_CARD_HEIGHT, ProductCard } from '@/components/products/ProductCard';
 import { ProductSkeleton } from '@/components/products/ProductSkeleton';
-import { GRID_GAP, VIRTUAL_OVERSCAN } from '@/constants';
+import { GRID_GAP, LOAD_MORE_THRESHOLD_ROWS, VIRTUAL_OVERSCAN } from '@/constants';
 import { brand } from '@/config/theme';
 import { useGridColumns } from '@/hooks/useGridColumns';
 import type { Product, ProductGridProps } from '@/types';
@@ -68,7 +69,16 @@ function EstadoVacio({ icon, title, detail }: { icon: string; title: string; det
   );
 }
 
-export function ProductGrid({ products, loading, error, isEmpty, keyword }: ProductGridProps) {
+export function ProductGrid({
+  products,
+  loading,
+  loadingMore,
+  hasMore,
+  onLoadMore,
+  error,
+  isEmpty,
+  keyword,
+}: ProductGridProps) {
   const columns = useGridColumns();
 
   // Contenedor con scroll propio: es el que observa el virtualizador.
@@ -92,6 +102,21 @@ export function ProductGrid({ products, loading, error, isEmpty, keyword }: Prod
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
   }, [keyword]);
+
+  const virtualRows = virtualizer.getVirtualItems();
+  const ultimaFilaVisible = virtualRows.at(-1)?.index ?? -1;
+
+  // Carga incremental: en lugar de observar el scroll con un listener aparte,
+  // se aprovecha que el virtualizador ya sabe qué filas están en pantalla.
+  // Cuando la última renderizada se acerca al final, se pide otra página.
+  useEffect(() => {
+    if (!hasMore || loadingMore) return;
+    if (ultimaFilaVisible < 0) return;
+
+    if (ultimaFilaVisible >= rows.length - LOAD_MORE_THRESHOLD_ROWS) {
+      onLoadMore();
+    }
+  }, [ultimaFilaVisible, rows.length, hasMore, loadingMore, onLoadMore]);
 
   if (error) {
     return (
@@ -139,7 +164,7 @@ export function ProductGrid({ products, loading, error, isEmpty, keyword }: Prod
       {/* Espaciador con la altura total de la lista: mantiene la barra de
           scroll proporcional aunque solo unas pocas filas existan en el DOM. */}
       <Box sx={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
-        {virtualizer.getVirtualItems().map((virtualRow) => (
+        {virtualRows.map((virtualRow) => (
           <Box
             key={virtualRow.key}
             sx={{
@@ -160,6 +185,21 @@ export function ProductGrid({ products, loading, error, isEmpty, keyword }: Prod
           </Box>
         ))}
       </Box>
+
+      {/* Aviso de carga de la siguiente página, fuera del área virtualizada. */}
+      {loadingMore && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1.5, py: 2.5 }}>
+          <CircularProgress size={18} thickness={5} />
+          <Typography variant="body2">Cargando más productos…</Typography>
+        </Box>
+      )}
+
+      {/* Fin del catálogo: cierra la lista en lugar de dejarla colgando. */}
+      {!hasMore && !loadingMore && products.length > 0 && (
+        <Typography variant="body2" sx={{ textAlign: 'center', py: 2.5, opacity: 0.7 }}>
+          No hay más productos para "{keyword}".
+        </Typography>
+      )}
     </Box>
   );
 }

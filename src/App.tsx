@@ -17,7 +17,7 @@ function App() {
   const [keyword, setKeyword] = useState("");
   const debouncedKeyword = useDebouncedValue(keyword);
 
-  const { products, loading, error, isEmpty } =
+  const { products, loading, loadingMore, hasMore, loadMore, error, isEmpty } =
     useProductSearch(debouncedKeyword);
 
   // Hay consulta pendiente también mientras el retardo no ha vencido.
@@ -34,6 +34,9 @@ function App() {
       <ProductGrid
         products={products}
         loading={buscando}
+        loadingMore={loadingMore}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
         error={error}
         isEmpty={isEmpty}
         keyword={debouncedKeyword.trim()}
