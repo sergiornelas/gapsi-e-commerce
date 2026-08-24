@@ -4,7 +4,7 @@ Buscador de productos con carrito de compras por arrastre, construido con React 
 TypeScript y Vite. Los productos se obtienen del servicio de búsqueda de Walmart
 expuesto a través de RapidAPI.
 
-![Captura de la aplicación](docs/captura.jpg)
+![Captura de la aplicación](docs/captura.webp)
 
 ---
 
