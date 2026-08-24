@@ -33,11 +33,15 @@ export function ProductCard({ product, dragging = false }: ProductCardProps) {
         backgroundColor: '#fff',
         // El original se atenúa mientras su copia flotante viaja con el puntero.
         opacity: dragging ? 0.35 : 1,
-        transition: 'box-shadow 200ms ease, transform 200ms ease, opacity 150ms ease',
+        transition:
+          'box-shadow 220ms ease, transform 220ms ease, opacity 150ms ease, border-color 220ms ease',
         '&:hover': {
-          boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
-          transform: 'translateY(-2px)',
+          boxShadow: '0 8px 22px rgba(0, 0, 0, 0.14)',
+          transform: 'translateY(-3px)',
+          borderColor: brand.accent,
         },
+        // La imagen acompaña el realce con un acercamiento apenas perceptible.
+        '&:hover .imagen-producto': { transform: 'scale(1.06)' },
       }}
     >
       <Box
@@ -52,10 +56,16 @@ export function ProductCard({ product, dragging = false }: ProductCardProps) {
       >
         <Box
           component="img"
+          className="imagen-producto"
           src={image}
           alt={name}
           loading="lazy"
-          sx={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+          sx={{
+            maxHeight: '100%',
+            maxWidth: '100%',
+            objectFit: 'contain',
+            transition: 'transform 280ms ease',
+          }}
         />
       </Box>
 

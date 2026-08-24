@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -47,27 +48,43 @@ const toRows = (products: readonly Product[], columns: number): Product[][] => {
 /** Mensaje centrado con un icono, para los estados sin contenido. */
 function EstadoVacio({ icon, title, detail }: { icon: string; title: string; detail?: string }) {
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 1.5,
-        py: 6,
-        color: brand.text,
-        textAlign: 'center',
-      }}
-    >
-      <Box component="i" className={icon} sx={{ fontSize: 44, opacity: 0.35 }} aria-hidden="true" />
-      <Typography variant="h2">{title}</Typography>
-      {detail && (
-        <Typography variant="body2" sx={{ maxWidth: 380 }}>
-          {detail}
-        </Typography>
-      )}
-    </Box>
+    <Fade in appear timeout={400}>
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1.5,
+          py: 6,
+          color: brand.text,
+          textAlign: 'center',
+        }}
+      >
+        <Box
+          component="i"
+          className={icon}
+          aria-hidden="true"
+          sx={{
+            fontSize: 44,
+            opacity: 0.35,
+            // Entrada suave del icono, que es lo primero que atrae la mirada.
+            animation: 'asomar 500ms ease',
+            '@keyframes asomar': {
+              from: { opacity: 0, transform: 'translateY(8px) scale(0.9)' },
+              to: { opacity: 0.35, transform: 'none' },
+            },
+          }}
+        />
+        <Typography variant="h2">{title}</Typography>
+        {detail && (
+          <Typography variant="body2" sx={{ maxWidth: 380 }}>
+            {detail}
+          </Typography>
+        )}
+      </Box>
+    </Fade>
   );
 }
 
@@ -187,7 +204,7 @@ export function ProductGrid({
   // Mientras llega la primera página no hay nada que virtualizar.
   if (loading && products.length === 0) {
     return (
-      <Box sx={{ flex: 1, overflowY: 'auto', px: 3, pb: 3, ...gridSx(columns) }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', px: { xs: 1.5, sm: 3 }, pb: 3, ...gridSx(columns) }}>
         {Array.from({ length: SKELETON_COUNT }, (_, index) => (
           <ProductSkeleton key={index} />
         ))}
@@ -196,7 +213,7 @@ export function ProductGrid({
   }
 
   return (
-    <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', px: 3, pb: 3 }}>
+    <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', px: { xs: 1.5, sm: 3 }, pb: 3 }}>
       {/* Espaciador con la altura total de la lista: mantiene la barra de
           scroll proporcional aunque solo unas pocas filas existan en el DOM. */}
       <Box sx={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
