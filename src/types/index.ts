@@ -51,7 +51,14 @@ export interface SearchProductsData {
 /** Interfaz que el hook `useProductSearch` expone a los componentes. */
 export interface UseProductSearch {
   products: readonly Product[];
+  /** Hay una primera página en camino. */
   loading: boolean;
+  /** Hay una página adicional en camino, con resultados ya en pantalla. */
+  loadingMore: boolean;
+  /** Quedan páginas por cargar para el criterio actual. */
+  hasMore: boolean;
+  /** Solicita la siguiente página. Ignora la llamada si no procede. */
+  loadMore: () => void;
   /** Mensaje de error listo para mostrarse, o `null` si no hubo fallo. */
   error: string | null;
   /** La búsqueda terminó sin resultados. */
@@ -74,6 +81,10 @@ export interface ProductCardProps {
 export interface ProductGridProps {
   products: readonly Product[];
   loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
+  /** Se invoca cuando el scroll se acerca al final de lo cargado. */
+  onLoadMore: () => void;
   error: string | null;
   isEmpty: boolean;
   /** Criterio actual, para dar contexto en los mensajes de estado. */

@@ -38,6 +38,15 @@ export const GRID_GAP = 16;
  */
 export const VIRTUAL_OVERSCAN = 2;
 
+/**
+ * A cuántas filas del final se pide la siguiente página.
+ *
+ * Se anticipa la carga para que los productos lleguen antes de que el usuario
+ * toque el fondo. El margen es amplio a propósito: el servicio tarda entre 20 y
+ * 40 segundos en responder (medido), así que conviene pedir con antelación.
+ */
+export const LOAD_MORE_THRESHOLD_ROWS = 5;
+
 /* Limpieza de texto */
 
 /** Separador con el que se sustituyen los bullets del HTML de la descripción. */
