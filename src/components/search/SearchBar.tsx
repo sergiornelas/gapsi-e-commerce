@@ -15,7 +15,7 @@ import type { SearchBarProps } from '@/types';
 
 export function SearchBar({ value, onChange, loading = false }: SearchBarProps) {
   return (
-    <Box sx={{ px: 3, pt: 2.5, pb: 1 }}>
+    <Box sx={{ px: { xs: 1.5, sm: 3 }, pt: 2.5, pb: 1 }}>
       <TextField
         fullWidth
         value={value}
