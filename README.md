@@ -265,6 +265,12 @@ la latencia del servicio, cada página cuesta dos viajes de ida y vuelta.
 
 ## Nota del candidato
 
-Tengo experiencia previa trabajando con Material-UI, lo que agilizó considerablemente
-la construcción de los componentes y permitió dedicar más tiempo a la capa de datos,
-que resultó ser la parte con más aristas del ejercicio.
+Tengo experiencia previa trabajando con **Material-UI** y con **virtualización de
+listas**, y ambas cosas agilizaron considerablemente el desarrollo: los componentes de
+interfaz se armaron rápido, y decidir de entrada que había que virtualizar por filas
+—en lugar de por tarjetas— evitó tener que rehacer la retícula al llegar la paginación.
+
+Ese tiempo ganado se pudo dedicar a la capa de datos, que resultó ser la parte con más
+aristas del ejercicio: el servicio alterna entre dos formatos de precio, mezcla
+anuncios entre los productos, entrega las descripciones como HTML y repite elementos
+entre páginas consecutivas.

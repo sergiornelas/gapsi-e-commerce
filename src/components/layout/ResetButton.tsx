@@ -43,7 +43,10 @@ export function ResetButton({ onReset, disabled = false }: ResetButtonProps) {
               color: '#050505',
               transition: 'background-color 150ms ease, transform 150ms ease',
               '&:hover': { backgroundColor: '#c4c4c4', transform: 'scale(1.05)' },
-              '&.Mui-disabled': { backgroundColor: '#e4e4e4', color: '#9e9e9e' },
+              // El botón debe seguir siendo legible cuando no hay nada que
+              // reiniciar: atenuado, pero nunca invisible. El gris anterior
+              // daba un contraste de 2:1 sobre su propio fondo.
+              '&.Mui-disabled': { backgroundColor: '#dedede', color: brand.text },
             }}
           >
             <i className="fa-solid fa-ellipsis-vertical" aria-hidden="true" />
