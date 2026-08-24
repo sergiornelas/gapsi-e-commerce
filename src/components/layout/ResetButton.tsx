@@ -52,12 +52,14 @@ export function ResetButton({ onReset, disabled = false }: ResetButtonProps) {
       </Tooltip>
 
       <Dialog open={confirmando} onClose={() => setConfirmando(false)}>
-        <DialogTitle sx={{ color: brand.textStrong }}>Reiniciar la aplicación</DialogTitle>
+        <DialogTitle sx={{ color: brand.textStrong }}>
+          Reiniciar la aplicación
+        </DialogTitle>
 
         <DialogContent>
           <DialogContentText>
-            Se vaciará el carrito y se borrarán los resultados de búsqueda. Esta acción no se
-            puede deshacer.
+            Se vaciará el carrito y se borrarán los resultados de búsqueda. Esta acción no
+            se puede deshacer.
           </DialogContentText>
         </DialogContent>
 

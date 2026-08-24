@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
  * Se usa en el buscador para no lanzar una consulta por cada tecla: el servicio
  * tiene cuota limitada y cada respuesta pesa cerca de 866 KB.
  */
-export const useDebouncedValue = <T,>(value: T, delay = 500): T => {
+export const useDebouncedValue = <T>(value: T, delay = 500): T => {
   const [debounced, setDebounced] = useState(value);
 
   useEffect(() => {

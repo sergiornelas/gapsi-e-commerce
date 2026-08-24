@@ -114,7 +114,11 @@ function Tienda() {
       onDragCancel={() => setArrastrando(null)}
     >
       <AppLayout onReset={reiniciar} disabled={!hayAlgoQueReiniciar}>
-        <SearchBar value={keyword} onChange={setKeyword} loading={buscando && keyword !== ''} />
+        <SearchBar
+          value={keyword}
+          onChange={setKeyword}
+          loading={buscando && keyword !== ''}
+        />
 
         <CartPanel />
 

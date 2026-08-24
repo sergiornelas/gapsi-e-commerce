@@ -57,7 +57,8 @@ export const pwaConfig: Partial<VitePWAOptions> = {
       },
       {
         // La tipografía y los iconos del CDN cambian con muy poca frecuencia.
-        urlPattern: /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)\/.*/i,
+        urlPattern:
+          /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)\/.*/i,
         handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'recursos-de-cdn',

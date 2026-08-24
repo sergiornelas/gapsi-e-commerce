@@ -38,7 +38,10 @@ export function AppLayout({ children, onReset, disabled }: AppLayoutProps) {
         <Header onReset={onReset} disabled={disabled} />
 
         {/* Área de contenido: es la que scrollea, no la página completa. */}
-        <Box component="main" sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <Box
+          component="main"
+          sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+        >
           {children}
         </Box>
 

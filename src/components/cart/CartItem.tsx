@@ -59,7 +59,12 @@ export function CartItem({ product, onRemove }: CartItemProps) {
           onClick={() => onRemove(product.id)}
           sx={{ ml: 'auto', color: brand.text, '&:hover': { color: '#d32f2f' } }}
         >
-          <Box component="i" className="fa-solid fa-xmark" sx={{ fontSize: 14 }} aria-hidden="true" />
+          <Box
+            component="i"
+            className="fa-solid fa-xmark"
+            sx={{ fontSize: 14 }}
+            aria-hidden="true"
+          />
         </IconButton>
       </Tooltip>
     </Box>

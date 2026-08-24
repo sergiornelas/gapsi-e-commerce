@@ -35,7 +35,9 @@ export function CartPanel() {
 
   return (
     <Box sx={{ px: { xs: 1.5, sm: 3 }, pt: 1, pb: 1.5 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}
+      >
         {/* Flecha guía: solo tiene sentido mientras el carrito está vacío. */}
         <GuideArrow visible={vacio && !arrastreEnCurso} />
 
@@ -60,7 +62,8 @@ export function CartPanel() {
               'border-color 180ms ease, background-color 180ms ease, transform 180ms ease',
             // Latido mientras hay algo en el aire, para que la zona no pase
             // desapercibida detrás de la tarjeta que sigue al puntero.
-            animation: arrastreEnCurso && !isOver ? 'latido 1.4s ease-in-out infinite' : 'none',
+            animation:
+              arrastreEnCurso && !isOver ? 'latido 1.4s ease-in-out infinite' : 'none',
             '@keyframes latido': {
               '0%, 100%': { boxShadow: '0 0 0 0 rgba(0, 184, 88, 0)' },
               '50%': { boxShadow: '0 0 0 8px rgba(0, 184, 88, 0.14)' },

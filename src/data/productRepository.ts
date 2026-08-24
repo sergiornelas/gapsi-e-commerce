@@ -8,9 +8,9 @@
  * Esto permite cambiar el origen (otro proveedor, un backend propio, datos de
  * prueba) sin tocar ni la capa de GraphQL ni los componentes.
  */
-import { apiConfig, buildSearchUrl, searchHeaders } from "@/config/api.config";
-import { adaptSearchResponse } from "@/data/walmartAdapter";
-import type { ProductPage, RawSearchResponse } from "@/types";
+import { apiConfig, buildSearchUrl, searchHeaders } from '@/config/api.config';
+import { adaptSearchResponse } from '@/data/walmartAdapter';
+import type { ProductPage, RawSearchResponse } from '@/types';
 
 /** Error de dominio: oculta los detalles del transporte a las capas superiores. */
 export class ProductSearchError extends Error {
@@ -19,7 +19,7 @@ export class ProductSearchError extends Error {
 
   constructor(message: string, status?: number) {
     super(message);
-    this.name = "ProductSearchError";
+    this.name = 'ProductSearchError';
     this.status = status;
   }
 }
@@ -27,14 +27,14 @@ export class ProductSearchError extends Error {
 /** Traduce un fallo del servicio a un mensaje que la interfaz pueda mostrar. */
 const describeFailure = (status: number): string => {
   if (status === 401 || status === 403) {
-    return "La llave de acceso al servicio de búsqueda no es válida. Revisa VITE_RAPIDAPI_KEY en tu archivo .env.";
+    return 'La llave de acceso al servicio de búsqueda no es válida. Revisa VITE_RAPIDAPI_KEY en tu archivo .env.';
   }
 
   if (status === 429) {
-    return "Se alcanzó el límite de consultas al servicio de búsqueda. Intenta de nuevo en unos minutos.";
+    return 'Se alcanzó el límite de consultas al servicio de búsqueda. Intenta de nuevo en unos minutos.';
   }
 
-  return "El servicio de búsqueda no está disponible en este momento.";
+  return 'El servicio de búsqueda no está disponible en este momento.';
 };
 
 export const productRepository = {
@@ -53,10 +53,7 @@ export const productRepository = {
       return { keyword: term, page, maxPage: 0, items: [] };
     }
 
-    const safePage = Math.min(
-      Math.max(page, apiConfig.firstPage),
-      apiConfig.maxPages,
-    );
+    const safePage = Math.min(Math.max(page, apiConfig.firstPage), apiConfig.maxPages);
 
     let response: Response;
 
@@ -66,15 +63,12 @@ export const productRepository = {
       });
     } catch {
       throw new ProductSearchError(
-        "No se pudo contactar al servicio de búsqueda. Revisa tu conexión a internet.",
+        'No se pudo contactar al servicio de búsqueda. Revisa tu conexión a internet.',
       );
     }
 
     if (!response.ok) {
-      throw new ProductSearchError(
-        describeFailure(response.status),
-        response.status,
-      );
+      throw new ProductSearchError(describeFailure(response.status), response.status);
     }
 
     const payload = (await response.json()) as RawSearchResponse;

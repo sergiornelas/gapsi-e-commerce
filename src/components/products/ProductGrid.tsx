@@ -46,7 +46,15 @@ const toRows = (products: readonly Product[], columns: number): Product[][] => {
 };
 
 /** Mensaje centrado con un icono, para los estados sin contenido. */
-function EstadoVacio({ icon, title, detail }: { icon: string; title: string; detail?: string }) {
+function EstadoVacio({
+  icon,
+  title,
+  detail,
+}: {
+  icon: string;
+  title: string;
+  detail?: string;
+}) {
   return (
     <Fade in appear timeout={400}>
       <Box
@@ -204,7 +212,15 @@ export function ProductGrid({
   // Mientras llega la primera página no hay nada que virtualizar.
   if (loading && products.length === 0) {
     return (
-      <Box sx={{ flex: 1, overflowY: 'auto', px: { xs: 1.5, sm: 3 }, pb: 3, ...gridSx(columns) }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          px: { xs: 1.5, sm: 3 },
+          pb: 3,
+          ...gridSx(columns),
+        }}
+      >
         {Array.from({ length: SKELETON_COUNT }, (_, index) => (
           <ProductSkeleton key={index} />
         ))}
@@ -213,7 +229,10 @@ export function ProductGrid({
   }
 
   return (
-    <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', px: { xs: 1.5, sm: 3 }, pb: 3 }}>
+    <Box
+      ref={scrollRef}
+      sx={{ flex: 1, overflowY: 'auto', px: { xs: 1.5, sm: 3 }, pb: 3 }}
+    >
       {/* Espaciador con la altura total de la lista: mantiene la barra de
           scroll proporcional aunque solo unas pocas filas existan en el DOM. */}
       <Box sx={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
@@ -241,7 +260,15 @@ export function ProductGrid({
 
       {/* Aviso de carga de la siguiente página, fuera del área virtualizada. */}
       {loadingMore && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1.5, py: 2.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 1.5,
+            py: 2.5,
+          }}
+        >
           <CircularProgress size={18} thickness={5} />
           <Typography variant="body2">Cargando más productos…</Typography>
         </Box>

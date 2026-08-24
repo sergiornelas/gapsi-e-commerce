@@ -24,19 +24,14 @@ import {
   HTML_ENTITIES,
   PRICE_LINE_LOOKUP,
   PRODUCT_TYPENAME,
-} from "@/constants";
-import type {
-  Product,
-  ProductPage,
-  RawProduct,
-  RawSearchResponse,
-} from "@/types";
+} from '@/constants';
+import type { Product, ProductPage, RawProduct, RawSearchResponse } from '@/types';
 
 /** Convierte un precio formateado ("$189.99", "1,299.00") a número. */
 const parseFormattedPrice = (value: string | undefined): number | null => {
   if (!value) return null;
 
-  const price = Number(value.replace(/[^0-9.]/g, ""));
+  const price = Number(value.replace(/[^0-9.]/g, ''));
 
   return Number.isFinite(price) && price > 0 ? price : null;
 };
@@ -84,13 +79,13 @@ const extractPrice = (raw: RawProduct): number | null => {
  * DOM (`dangerouslySetInnerHTML`), que sería un vector de XSS.
  */
 const toPlainText = (html: string | undefined): string => {
-  if (!html) return "";
+  if (!html) return '';
 
   return html
     .replace(/<\/li>\s*<li>/gi, BULLET_SEPARATOR) // los bullets se vuelven separadores
-    .replace(/<[^>]+>/g, "") // se eliminan las etiquetas restantes
+    .replace(/<[^>]+>/g, '') // se eliminan las etiquetas restantes
     .replace(/&[a-z#0-9]+;/gi, (entity) => HTML_ENTITIES[entity] ?? entity)
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, ' ')
     .trim();
 };
 
@@ -131,8 +126,7 @@ export const adaptSearchResponse = (
   keyword: string,
   page: number,
 ): ProductPage => {
-  const searchResult =
-    response.item?.props?.pageProps?.initialData?.searchResult;
+  const searchResult = response.item?.props?.pageProps?.initialData?.searchResult;
 
   const seen = new Set<string>();
   const items: Product[] = [];

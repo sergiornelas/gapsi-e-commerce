@@ -1,7 +1,7 @@
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
-import { GRID_COLUMNS } from "@/constants";
+import { GRID_COLUMNS } from '@/constants';
 
 /**
  * Número de columnas de la retícula según el ancho de pantalla.
@@ -11,8 +11,8 @@ import { GRID_COLUMNS } from "@/constants";
  */
 export const useGridColumns = (): number => {
   const theme = useTheme();
-  const isMedium = useMediaQuery(theme.breakpoints.up("md"));
-  const isSmall = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
+  const isSmall = useMediaQuery(theme.breakpoints.up('sm'));
 
   if (isMedium) {
     return GRID_COLUMNS.md;
